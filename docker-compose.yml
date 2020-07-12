@@ -1,0 +1,30 @@
+version: "3"
+services:
+  cafe-postgres:
+    image: postgres:10.13-alpine
+    container_name: cafe-postgres
+    hostname: cafe-postgres
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+  cafe-backend:
+    image: cafe-backend:only
+    container_name: cafe-backend
+    hostname: cafe-backend
+    environment:
+      - postgres.url=jdbc:postgresql://cafe-postgres:5432/postgres?currentSchema=public
+      - postgres.username=root
+      - postgres.password=root
+      - jwt-expiration-millis=28799000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - cafe-postgres
+  cafe-frontend:
+    image: cafe-frontend:only
+    container_name: cafe-frontend
+    hostname: cafe-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - cafe-backend
